@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Register - IntelliHire{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-5">
+      <div class="card card-glass p-4 p-md-5">
+        <div class="text-center mb-4">
+          <div class="d-inline-flex align-items-center justify-content-center bg-primary rounded-3 text-white p-3 mb-3 shadow">
+            <i class="bi bi-person-plus-fill fs-3"></i>
+          </div>
+          <h2 class="fw-bold text-white mb-1">Create Student Account</h2>
+          <p class="text-muted small">Begin preparing with adaptive AI mock interviews</p>
+        </div>
+
+        <form action="{{ url_for('auth.register') }}" method="POST">
+          <div class="mb-3">
+            <label for="name" class="form-label">Full Name</label>
+            <div class="input-group">
+              <span class="input-group-text bg-dark border-secondary text-muted"><i class="bi bi-person"></i></span>
+              <input type="text" class="form-control form-control-custom" id="name" name="name" value="{{ name or '' }}" placeholder="John Doe" required autofocus>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Email Address</label>
+            <div class="input-group">
+              <span class="input-group-text bg-dark border-secondary text-muted"><i class="bi bi-envelope"></i></span>
+              <input type="email" class="form-control form-control-custom" id="email" name="email" value="{{ email or '' }}" placeholder="student@college.edu" required>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <div class="input-group">
+              <span class="input-group-text bg-dark border-secondary text-muted"><i class="bi bi-key"></i></span>
+              <input type="password" class="form-control form-control-custom" id="password" name="password" placeholder="At least 6 characters" minlength="6" required>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="confirm_password" class="form-label">Confirm Password</label>
+            <div class="input-group">
+              <span class="input-group-text bg-dark border-secondary text-muted"><i class="bi bi-check2-circle"></i></span>
+              <input type="password" class="form-control form-control-custom" id="confirm_password" name="confirm_password" placeholder="Repeat your password" minlength="6" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary-custom w-100 py-2 mb-3">
+            <i class="bi bi-stars me-1"></i> Create Student Account
+          </button>
+        </form>
+
+        <div class="text-center mt-3 text-muted small">
+          Already have an account? 
+          <a href="{{ url_for('auth.login') }}" class="text-primary fw-semibold text-decoration-none">Log In</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

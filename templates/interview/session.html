@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Interview in Progress - IntelliHire{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+      <!-- Session Navigation & Status Bar -->
+      <div class="card card-glass p-3 mb-4">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-primary px-3 py-2 fs-6">
+              Question {{ interview_session.current_index + 1 }} of {{ interview_session.question_count }}
+            </span>
+            <span class="badge bg-dark border border-secondary text-light">
+              <i class="bi bi-building me-1"></i>{{ interview_session.company }}
+            </span>
+            <span class="badge badge-tech">
+              {{ interview_session.skill }}
+            </span>
+          </div>
+
+          <div class="d-flex align-items-center gap-2">
+            <div class="badge bg-dark border border-secondary text-warning px-3 py-2 fs-6">
+              <i class="bi bi-stopwatch me-1"></i> <span id="timerDisplay">00:00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        {% set progress_pct = ((interview_session.current_index + 1) / interview_session.question_count) * 100 %}
+        <div class="progress" style="height: 6px; background-color: rgba(255,255,255,0.1);">
+          <div class="progress-bar bg-primary" role="progressbar" style="width: {{ progress_pct }}%"></div>
+        </div>
+      </div>
+
+      <!-- Question Card -->
+      <div class="card card-glass p-4 p-md-5 mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+          <div class="d-flex align-items-center gap-2">
+            <span class="badge {% if current_question.difficulty == 'Hard' %}badge-danger-subtle{% elif current_question.difficulty == 'Medium' %}badge-warning-subtle{% else %}badge-success-subtle{% endif %}">
+              {{ current_question.difficulty }} Level
+            </span>
+            <span class="badge bg-dark border border-secondary text-muted small">
+              <i class="bi bi-cpu me-1"></i>Source: 
+              {% if current_question.question_source == 'company_bank' %}
+                Company Question Bank
+              {% elif current_question.question_source == 'general_bank' %}
+                General Practice Bank
+              {% else %}
+                Adaptive Synthesizer
+              {% endif %}
+            </span>
+          </div>
+        </div>
+
+        <h3 class="fw-bold text-white mb-4 line-height-base">
+          {{ current_question.question_text }}
+        </h3>
+
+        <!-- Answer Input Area -->
+        <div class="mb-3">
+          <label for="answerInput" class="form-label d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-pencil-square me-1 text-primary"></i> Your Response:</span>
+            <span class="text-muted small">
+              Words: <span id="wordCount" class="text-white fw-bold">0</span> | 
+              Chars: <span id="charCount" class="text-white fw-bold">0</span>
+            </span>
+          </label>
+          <textarea 
+            class="form-control form-control-custom" 
+            id="answerInput" 
+            rows="8" 
+            placeholder="Type your structured technical response here... (Explain core definitions, internal mechanisms, runtime tradeoffs, and examples where applicable)"
+            required autofocus></textarea>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-4 pt-2 border-top border-secondary opacity-75">
+          <span class="text-muted small">
+            <i class="bi bi-shield-check text-success me-1"></i> Evaluated via scikit-learn TF-IDF & Keyword Coverage
+          </span>
+
+          <button 
+            type="button" 
+            id="submitAnswerBtn" 
+            class="btn btn-primary-custom px-4 py-2 fs-6" 
+            data-session-uuid="{{ interview_session.session_uuid }}">
+            <span id="submitSpinner" class="spinner-border spinner-border-sm me-2 d-none" role="status"></span>
+            <span id="submitText"><i class="bi bi-send-fill me-1"></i> Submit Answer</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NLP Answer Evaluation Feedback Modal -->
+<div class="modal fade" id="evaluationModal" tabindex="-1" aria-labelledby="evaluationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content card-glass border-secondary">
+      <div class="modal-header border-secondary">
+        <h5 class="modal-title fw-bold text-white" id="evaluationModalLabel">
+          <i class="bi bi-cpu-fill text-primary me-2"></i> NLP Answer Evaluation
+        </h5>
+      </div>
+      <div class="modal-body p-4">
+        <!-- Score Highlights Row -->
+        <div class="row g-3 text-center mb-4">
+          <div class="col-4">
+            <div class="p-3 bg-dark rounded border border-secondary">
+              <span class="small text-muted d-block">Overall Score</span>
+              <span id="modalScore" class="fs-2 fw-bold text-success">--</span>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="p-3 bg-dark rounded border border-secondary">
+              <span class="small text-muted d-block">Semantic Similarity</span>
+              <span id="modalSim" class="fs-2 fw-bold text-info">--</span>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="p-3 bg-dark rounded border border-secondary">
+              <span class="small text-muted d-block">Keyword Coverage</span>
+              <span id="modalCov" class="fs-2 fw-bold text-warning">--</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Evaluation Feedback Message -->
+        <div class="p-3 bg-dark rounded border border-secondary border-opacity-50 mb-3">
+          <h6 class="fw-bold text-white mb-1"><i class="bi bi-chat-left-dots text-primary me-2"></i>Feedback Summary:</h6>
+          <p id="modalFeedback" class="text-light small mb-0"></p>
+        </div>
+
+        <!-- Strengths & Missing Concepts Grid -->
+        <div class="row g-3 mb-3">
+          <div class="col-md-6">
+            <div class="p-3 bg-dark rounded border border-secondary h-100">
+              <h6 class="fw-bold text-success mb-2"><i class="bi bi-check-circle me-1"></i>Strengths Detected</h6>
+              <ul id="modalStrengths" class="small text-muted mb-0 ps-3"></ul>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 bg-dark rounded border border-secondary h-100">
+              <h6 class="fw-bold text-danger mb-2"><i class="bi bi-exclamation-triangle me-1"></i>Omitted / Missing Concepts</h6>
+              <div id="modalMissing" class="d-flex flex-wrap gap-1"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="small text-muted fst-italic">
+          * Assessment performed using scikit-learn TF-IDF Vector Space Model & Lexical Keyword Coverage.
+        </div>
+      </div>
+      <div class="modal-footer border-secondary">
+        <button type="button" id="modalContinueBtn" class="btn btn-primary-custom px-4">
+          Continue <i class="bi bi-arrow-right ms-1"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/interview.js') }}"></script>
+{% endblock %}

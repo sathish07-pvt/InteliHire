@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}User Management - IntelliHire Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="fw-bold text-white mb-0">Registered User Directory</h2>
+      <p class="text-muted small mb-0">Monitor active student candidates, accounts, and system administrators</p>
+    </div>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-outline-custom">
+      <i class="bi bi-arrow-left me-1"></i> Admin Dashboard
+    </a>
+  </div>
+
+  <div class="card card-glass p-4">
+    <div class="table-responsive">
+      <table class="table table-custom">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Registered Date</th>
+            <th>Interviews</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+            <tr>
+              <td><span class="badge bg-dark border border-secondary text-muted">#{{ u.id }}</span></td>
+              <td><span class="text-white fw-bold">{{ u.name }}</span></td>
+              <td><span class="text-muted small">{{ u.email }}</span></td>
+              <td>
+                <span class="badge {% if u.role == 'admin' %}bg-warning text-dark{% else %}bg-primary bg-opacity-25 text-primary{% endif %} text-uppercase">
+                  {{ u.role }}
+                </span>
+              </td>
+              <td class="text-muted small">{{ u.created_at.strftime("%d %b %Y, %I:%M %p") }}</td>
+              <td>
+                <span class="badge bg-dark border border-secondary">{{ u.interview_sessions|length }} Sessions</span>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

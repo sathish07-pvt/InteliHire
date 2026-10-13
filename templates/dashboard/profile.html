@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}User Profile - IntelliHire{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card card-glass p-4 p-md-5 mb-4">
+        <div class="d-flex align-items-center gap-3 mb-4">
+          <div class="stat-icon bg-primary bg-opacity-25 text-primary fs-3" style="width: 60px; height: 60px;">
+            <i class="bi bi-person-badge-fill"></i>
+          </div>
+          <div>
+            <h3 class="fw-bold text-white mb-0">{{ user.name }}</h3>
+            <span class="badge bg-secondary text-light text-uppercase">{{ user.role }}</span>
+            <span class="text-muted small ms-2">Member since {{ user.created_at.strftime("%b %Y") }}</span>
+          </div>
+        </div>
+
+        <form action="{{ url_for('main.profile') }}" method="POST">
+          <div class="mb-3">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-control form-control-custom" name="name" value="{{ user.name }}" required>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-control form-control-custom bg-dark opacity-75" value="{{ user.email }}" readonly disabled>
+            <div class="form-text text-muted">Email address cannot be modified once registered.</div>
+          </div>
+
+          <hr class="border-secondary opacity-25 my-4">
+
+          <h5 class="fw-bold text-white mb-3"><i class="bi bi-key-fill text-warning me-2"></i>Change Password</h5>
+
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label">New Password</label>
+              <input type="password" class="form-control form-control-custom" name="new_password" placeholder="Leave blank to keep current" minlength="6">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Confirm New Password</label>
+              <input type="password" class="form-control form-control-custom" name="confirm_password" placeholder="Repeat new password" minlength="6">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary-custom">
+            <i class="bi bi-check2-circle me-1"></i> Save Profile Changes
+          </button>
+        </form>
+      </div>
+
+      <!-- Verified Skill Badges -->
+      <div class="card card-glass p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h5 class="fw-bold text-white mb-0"><i class="bi bi-tags-fill text-info me-2"></i>Active Candidate Skills</h5>
+          <a href="{{ url_for('resume.analyze') }}" class="btn btn-sm btn-outline-custom">Manage via Resume</a>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          {% if user_skills %}
+            {% for s in user_skills %}
+              <span class="badge bg-dark border border-secondary text-light px-3 py-2">
+                {{ s.skill_name }} <span class="text-muted ms-1">({{ s.proficiency }})</span>
+              </span>
+            {% endfor %}
+          {% else %}
+            <span class="text-muted small">No skills registered yet. Upload your resume to extract skills automatically.</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

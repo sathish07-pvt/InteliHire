@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Internal Server Error - IntelliHire{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+  <div class="py-5">
+    <div class="display-1 fw-bold text-danger mb-2">500</div>
+    <h2 class="fw-bold text-white mb-3">System Exception Encountered</h2>
+    <p class="text-muted mb-4">An unexpected processing error occurred. The system logs have recorded this incident without exposing sensitive system traces.</p>
+    <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary-custom px-4 py-2">
+      <i class="bi bi-arrow-clockwise me-1"></i> Return to Dashboard
+    </a>
+  </div>
+</div>
+{% endblock %}

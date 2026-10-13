@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Administrator Dashboard - IntelliHire{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Admin Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div>
+      <span class="badge bg-warning bg-opacity-25 text-warning mb-1"><i class="bi bi-shield-lock-fill me-1"></i>Administrator Portal</span>
+      <h2 class="fw-bold text-white mb-0">System Control Center</h2>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="{{ url_for('admin.question_add') }}" class="btn btn-primary-custom">
+        <i class="bi bi-plus-circle me-1"></i> Add New Question
+      </a>
+      <form action="{{ url_for('admin.seed_database') }}" method="POST" class="d-inline" onsubmit="return confirm('Re-seed practice questions from seed file?');">
+        <button type="submit" class="btn btn-outline-custom">
+          <i class="bi bi-arrow-clockwise me-1"></i> Re-Seed Question Bank
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Metric Counters -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-4">
+      <div class="card card-glass p-4">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <span class="text-muted small fw-semibold">Total Students / Users</span>
+          <div class="stat-icon bg-info bg-opacity-25 text-info">
+            <i class="bi bi-people-fill"></i>
+          </div>
+        </div>
+        <div class="fs-2 fw-bold text-white">{{ total_users }}</div>
+        <div class="mt-2">
+          <a href="{{ url_for('admin.users_list') }}" class="text-info small text-decoration-none">View All Users &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card card-glass p-4">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <span class="text-muted small fw-semibold">Question Bank Items</span>
+          <div class="stat-icon bg-success bg-opacity-25 text-success">
+            <i class="bi bi-patch-question-fill"></i>
+          </div>
+        </div>
+        <div class="fs-2 fw-bold text-white">{{ total_questions }}</div>
+        <div class="mt-2">
+          <a href="{{ url_for('admin.questions_list') }}" class="text-success small text-decoration-none">Manage Bank &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card card-glass p-4">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <span class="text-muted small fw-semibold">Total Conducted Interviews</span>
+          <div class="stat-icon bg-primary bg-opacity-25 text-primary">
+            <i class="bi bi-clipboard2-data-fill"></i>
+          </div>
+        </div>
+        <div class="fs-2 fw-bold text-white">{{ total_interviews }}</div>
+        <div class="mt-2">
+          <span class="text-muted small">Real-time candidate activity</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Recent Questions -->
+    <div class="col-lg-7">
+      <div class="card card-glass p-4 h-100">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h5 class="fw-bold text-white mb-0">Question Bank Sample</h5>
+          <a href="{{ url_for('admin.questions_list') }}" class="btn btn-sm btn-outline-custom">View All</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-custom">
+            <thead>
+              <tr>
+                <th>Question</th>
+                <th>Company</th>
+                <th>Skill</th>
+                <th>Difficulty</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for q in recent_questions %}
+                <tr>
+                  <td><span class="text-white small fw-semibold">{{ q.question_text|truncate(45) }}</span></td>
+                  <td><span class="badge bg-dark border border-secondary">{{ q.company }}</span></td>
+                  <td><span class="badge badge-tech">{{ q.skill }}</span></td>
+                  <td>
+                    <span class="badge {% if q.difficulty == 'Hard' %}badge-danger-subtle{% elif q.difficulty == 'Medium' %}badge-warning-subtle{% else %}badge-success-subtle{% endif %}">
+                      {{ q.difficulty }}
+                    </span>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent Users -->
+    <div class="col-lg-5">
+      <div class="card card-glass p-4 h-100">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h5 class="fw-bold text-white mb-0">Registered Users</h5>
+          <a href="{{ url_for('admin.users_list') }}" class="btn btn-sm btn-outline-custom">View All</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-custom">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for u in recent_users %}
+                <tr>
+                  <td class="text-white small fw-semibold">{{ u.name }}</td>
+                  <td class="text-muted small">{{ u.email }}</td>
+                  <td>
+                    <span class="badge {% if u.role == 'admin' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+                      {{ u.role }}
+                    </span>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+
+{% block title %}Interview Performance Report - IntelliHire{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Report Header -->
+  <div class="card card-glass p-4 p-md-5 mb-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4 border-bottom border-secondary pb-4">
+      <div>
+        <span class="badge badge-tech mb-2">Performance Assessment</span>
+        <h2 class="fw-bold text-white mb-1">Interview Performance Report</h2>
+        <div class="text-muted small">
+          <span>Session: <strong class="text-white">{{ interview_session.company }} ({{ interview_session.skill }})</strong></span> | 
+          <span>Completed: {{ interview_session.completed_at.strftime("%d %b %Y, %I:%M %p") if interview_session.completed_at else 'Completed' }}</span> | 
+          <span>Format: {{ interview_session.interview_type }} ({{ interview_session.difficulty }})</span>
+        </div>
+      </div>
+      <div class="d-flex gap-2">
+        <button onclick="window.print()" class="btn btn-outline-custom">
+          <i class="bi bi-printer me-1"></i> Print / Save PDF
+        </button>
+        <a href="{{ url_for('interview.setup') }}" class="btn btn-primary-custom">
+          <i class="bi bi-arrow-repeat me-1"></i> Practice Again
+        </a>
+      </div>
+    </div>
+
+    <!-- Main KPI Scorecards Row -->
+    <div class="row g-3 text-center mb-4">
+      <div class="col-6 col-lg-3">
+        <div class="p-4 bg-dark rounded border border-secondary h-100">
+          <span class="text-muted small d-block mb-1">Overall Final Score</span>
+          <div class="fs-1 fw-bold {% if report.overall_score >= 70 %}text-success{% elif report.overall_score >= 50 %}text-warning{% else %}text-danger{% endif %}">
+            {{ report.overall_score }}<span class="fs-5 text-muted">/100</span>
+          </div>
+          <div class="small text-muted mt-1">Weighted composite score</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="p-4 bg-dark rounded border border-secondary h-100">
+          <span class="text-muted small d-block mb-1">Interview Readiness</span>
+          <div class="fs-1 fw-bold text-info">
+            {{ report.readiness_percentage }}%
+          </div>
+          <div class="small text-muted mt-1">Placement probability factor</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="p-4 bg-dark rounded border border-secondary h-100">
+          <span class="text-muted small d-block mb-1">Technical Knowledge</span>
+          <div class="fs-1 fw-bold text-primary">
+            {{ report.technical_knowledge_score }}<span class="fs-5 text-muted">/100</span>
+          </div>
+          <div class="small text-muted mt-1">Semantic domain alignment</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="p-4 bg-dark rounded border border-secondary h-100">
+          <span class="text-muted small d-block mb-1">Communication Quality</span>
+          <div class="fs-4 fw-bold text-secondary mt-2">
+            Self-Assessed
+          </div>
+          <div class="small text-muted mt-1">Acoustic & facial analysis not simulated</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Qualitative Strengths & Improvement Areas -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-4">
+        <div class="p-3 bg-dark rounded border border-secondary h-100">
+          <h6 class="fw-bold text-success mb-2"><i class="bi bi-shield-check me-1"></i>Demonstrated Strengths</h6>
+          {% if report.strong_topics %}
+            <ul class="small text-light mb-0 ps-3">
+              {% for item in report.strong_topics %}
+                <li>{{ item }}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <span class="small text-muted">No high-scoring clusters identified in this session.</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-3 bg-dark rounded border border-secondary h-100">
+          <h6 class="fw-bold text-danger mb-2"><i class="bi bi-exclamation-triangle me-1"></i>Target Improvement Areas</h6>
+          {% if report.weak_topics %}
+            <ul class="small text-light mb-0 ps-3">
+              {% for item in report.weak_topics %}
+                <li>{{ item }}</li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <span class="small text-muted">Solid overall performance with no major drop-offs.</span>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-3 bg-dark rounded border border-secondary h-100">
+          <h6 class="fw-bold text-warning mb-2"><i class="bi bi-lightbulb me-1"></i>Key Missing Concepts</h6>
+          {% if report.missing_concepts %}
+            <div class="d-flex flex-wrap gap-1">
+              {% for c in report.missing_concepts %}
+                <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50">{{ c }}</span>
+              {% endfor %}
+            </div>
+          {% else %}
+            <span class="small text-muted">Technical concepts thoroughly addressed!</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Chart: Question-wise Score Graph -->
+    <div class="mb-4">
+      <h5 class="fw-bold text-white mb-3"><i class="bi bi-bar-chart-fill text-primary me-2"></i>Question-by-Question Progression</h5>
+      <div class="p-3 bg-dark rounded border border-secondary" style="height: 250px;">
+        <canvas id="questionScoresChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Personalized Recommendations -->
+    <div class="p-4 bg-dark rounded border border-secondary mb-4">
+      <h5 class="fw-bold text-white mb-2"><i class="bi bi-compass text-info me-2"></i>Personalized Revision Recommendations</h5>
+      <ul class="text-light small mb-0 ps-3">
+        {% for rec in report.recommendations %}
+          <li class="mb-1">{{ rec }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Detailed Question Log Accordion -->
+  <div class="card card-glass p-4 mb-4">
+    <h4 class="fw-bold text-white mb-3"><i class="bi bi-list-check text-warning me-2"></i>Comprehensive Answer Evaluation Log</h4>
+    <p class="text-muted small mb-4">Examine your submitted responses side-by-side with model benchmarks and individual NLP assessments.</p>
+
+    <div class="accordion" id="answersAccordion">
+      {% for q in questions %}
+        <div class="accordion-item bg-dark border-secondary mb-3 rounded overflow-hidden">
+          <h2 class="accordion-header" id="heading{{ q.id }}">
+            <button class="accordion-button bg-dark text-white collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ q.id }}" aria-expanded="false" aria-controls="collapse{{ q.id }}">
+              <div class="d-flex align-items-center justify-content-between w-100 me-3">
+                <div>
+                  <span class="badge bg-primary me-2">Q{{ q.order_index }}</span>
+                  <span class="fw-semibold">{{ q.question_text|truncate(80) }}</span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge {% if q.final_score >= 70 %}badge-success-subtle{% elif q.final_score >= 50 %}badge-warning-subtle{% else %}badge-danger-subtle{% endif %}">
+                    {{ q.final_score }}/100
+                  </span>
+                </div>
+              </div>
+            </button>
+          </h2>
+          <div id="collapse{{ q.id }}" class="accordion-collapse collapse" aria-labelledby="heading{{ q.id }}" data-bs-parent="#answersAccordion">
+            <div class="accordion-body p-4 border-top border-secondary">
+              <!-- Full Question -->
+              <div class="mb-3">
+                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Full Question Prompt:</span>
+                <div class="text-white fw-bold">{{ q.question_text }}</div>
+              </div>
+
+              <!-- Candidate Answer -->
+              <div class="mb-3">
+                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Your Submitted Response:</span>
+                <div class="p-3 bg-black rounded text-light small border border-secondary">
+                  {{ q.user_answer or '(No answer provided)' }}
+                </div>
+              </div>
+
+              <!-- Model Benchmark Answer -->
+              <div class="mb-3">
+                <span class="text-muted small fw-bold text-uppercase d-block mb-1">Benchmark Model Answer:</span>
+                <div class="p-3 bg-black rounded text-light small border border-secondary">
+                  {{ q.model_answer }}
+                </div>
+              </div>
+
+              <!-- Metrics & Breakdown -->
+              <div class="row g-2 mb-2 text-center">
+                <div class="col-md-4">
+                  <div class="p-2 bg-dark rounded border border-secondary small">
+                    <span class="text-muted">TF-IDF Similarity:</span> <strong class="text-info">{{ q.similarity_score }}%</strong>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="p-2 bg-dark rounded border border-secondary small">
+                    <span class="text-muted">Keyword Coverage:</span> <strong class="text-warning">{{ q.keyword_coverage }}%</strong>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="p-2 bg-dark rounded border border-secondary small">
+                    <span class="text-muted">Source:</span> <strong class="text-white">{{ q.question_source }}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Constructive Feedback -->
+              <div class="small text-muted mt-2">
+                <strong>Feedback:</strong> {{ q.feedback }}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // Render Chart.js Question Scores Chart
+  const ctxReport = document.getElementById('questionScoresChart').getContext('2d');
+  new Chart(ctxReport, {
+    type: 'bar',
+    data: {
+      labels: {{ chart_labels|tojson }},
+      datasets: [{
+        label: 'Question Score (/100)',
+        data: {{ chart_scores|tojson }},
+        backgroundColor: 'rgba(99, 102, 241, 0.75)',
+        borderColor: '#6366f1',
+        borderWidth: 1,
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          min: 0,
+          max: 100,
+          grid: { color: 'rgba(255, 255, 255, 0.05)' },
+          ticks: { color: '#94a3b8' }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: '#94a3b8' }
+        }
+      },
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+</script>
+{% endblock %}

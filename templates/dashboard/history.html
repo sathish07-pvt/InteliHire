@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Interview History - IntelliHire{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="fw-bold text-white mb-0">Interview History & Analytics</h2>
+      <p class="text-muted small mb-0">Archive of all past sessions, question logs, and performance reports</p>
+    </div>
+    <a href="{{ url_for('interview.setup') }}" class="btn btn-primary-custom">
+      <i class="bi bi-play-circle me-1"></i> Start New Interview
+    </a>
+  </div>
+
+  <div class="card card-glass p-4">
+    {% if sessions %}
+      <div class="table-responsive">
+        <table class="table table-custom">
+          <thead>
+            <tr>
+              <th>Date & Time</th>
+              <th>Company</th>
+              <th>Skill</th>
+              <th>Type</th>
+              <th>Difficulty</th>
+              <th>Questions</th>
+              <th>Score</th>
+              <th>Readiness</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for s in sessions %}
+              <tr>
+                <td class="text-muted small">{{ s.created_at.strftime("%d %b %Y, %I:%M %p") }}</td>
+                <td><span class="fw-semibold text-white">{{ s.company }}</span></td>
+                <td><span class="badge badge-tech">{{ s.skill }}</span></td>
+                <td><span class="small text-muted">{{ s.interview_type }}</span></td>
+                <td>
+                  <span class="badge {% if s.difficulty == 'Hard' %}badge-danger-subtle{% elif s.difficulty == 'Medium' %}badge-warning-subtle{% else %}badge-success-subtle{% endif %}">
+                    {{ s.difficulty }}
+                  </span>
+                </td>
+                <td>{{ s.question_count }} Qs</td>
+                <td>
+                  {% if s.report %}
+                    <span class="fw-bold {% if s.report.overall_score >= 70 %}text-success{% elif s.report.overall_score >= 50 %}text-warning{% else %}text-danger{% endif %}">
+                      {{ s.report.overall_score }}/100
+                    </span>
+                  {% else %}
+                    <span class="badge bg-secondary">Incomplete</span>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if s.report %}
+                    <span class="badge bg-dark border border-secondary">{{ s.report.readiness_percentage }}%</span>
+                  {% else %}
+                    -
+                  {% endif %}
+                </td>
+                <td>
+                  {% if s.status == 'completed' %}
+                    <a href="{{ url_for('interview.report_view', session_uuid=s.session_uuid) }}" class="btn btn-sm btn-primary-custom py-1 px-3">
+                      <i class="bi bi-file-earmark-text me-1"></i> Report
+                    </a>
+                  {% else %}
+                    <a href="{{ url_for('interview.session_view', session_uuid=s.session_uuid) }}" class="btn btn-sm btn-warning py-1 px-3">
+                      <i class="bi bi-play-circle me-1"></i> Continue
+                    </a>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="text-center py-5">
+        <i class="bi bi-clock-history fs-1 text-muted opacity-50 mb-2"></i>
+        <h5 class="text-white fw-bold">No sessions logged</h5>
+        <p class="text-muted small mb-3">You haven't undertaken any mock interviews yet.</p>
+        <a href="{{ url_for('interview.setup') }}" class="btn btn-primary-custom">
+          Start Your First Interview
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

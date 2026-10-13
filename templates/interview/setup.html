@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Interview Setup - IntelliHire{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card card-glass p-4 p-md-5">
+        <div class="text-center mb-4">
+          <div class="d-inline-flex align-items-center justify-content-center bg-primary rounded-3 text-white p-3 mb-3 shadow">
+            <i class="bi bi-gear-fill fs-3"></i>
+          </div>
+          <h2 class="fw-bold text-white mb-1">Configure Your Mock Interview</h2>
+          <p class="text-muted small">Select your target company, core skill competency, and practice intensity</p>
+        </div>
+
+        <form action="{{ url_for('interview.setup') }}" method="POST">
+          <!-- Company Selection -->
+          <div class="mb-4">
+            <label class="form-label d-flex align-items-center justify-content-between">
+              <span><i class="bi bi-building me-1 text-primary"></i> Target Company</span>
+              <span class="badge bg-dark border border-secondary text-muted">Company-Specific Banks</span>
+            </label>
+            <div class="row g-2">
+              {% for c in companies %}
+                <div class="col-6 col-md-4">
+                  <input type="radio" class="btn-check" name="company" id="comp_{{ c }}" value="{{ c }}" {% if c == 'General' %}checked{% endif %}>
+                  <label class="btn btn-outline-custom w-100 text-start py-2 d-flex align-items-center justify-content-between" for="comp_{{ c }}">
+                    <span>{{ c }}</span>
+                    <i class="bi bi-check-circle text-primary opacity-0"></i>
+                  </label>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Skill Competency -->
+          <div class="mb-4">
+            <label class="form-label d-flex align-items-center justify-content-between">
+              <span><i class="bi bi-code-square me-1 text-info"></i> Primary Skill / Track</span>
+              {% if user_skills %}
+                <span class="badge bg-info bg-opacity-25 text-info">Matched from Resume</span>
+              {% endif %}
+            </label>
+            <select name="skill" class="form-select form-select-custom py-2" required>
+              {% for s in skills %}
+                <option value="{{ s }}" {% if user_skills and s in user_skills %}selected{% elif s == 'Java' %}selected{% endif %}>
+                  {{ s }} {% if user_skills and s in user_skills %}&#9733; (Detected in Resume){% endif %}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <!-- Interview Type & Difficulty Row -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <label class="form-label"><i class="bi bi-person-lines-fill me-1 text-warning"></i> Interview Type</label>
+              <select name="interview_type" class="form-select form-select-custom py-2" required>
+                <option value="Technical" selected>Technical Round</option>
+                <option value="HR">HR / Behavioral Round</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label"><i class="bi bi-bar-chart-steps me-1 text-danger"></i> Initial Difficulty</label>
+              <select name="difficulty" class="form-select form-select-custom py-2" required>
+                <option value="Easy">Easy (Foundational)</option>
+                <option value="Medium" selected>Medium (Standard Campus)</option>
+                <option value="Hard">Hard (Advanced / Deep Dive)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Number of Questions -->
+          <div class="mb-4">
+            <label class="form-label"><i class="bi bi-list-ol me-1 text-success"></i> Question Count</label>
+            <div class="row g-2">
+              {% for qc in question_counts %}
+                <div class="col-4">
+                  <input type="radio" class="btn-check" name="question_count" id="qc_{{ qc }}" value="{{ qc }}" {% if qc == 5 %}checked{% endif %}>
+                  <label class="btn btn-outline-custom w-100 py-2 text-center" for="qc_{{ qc }}">
+                    {{ qc }} Questions
+                  </label>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="p-3 bg-dark rounded border border-secondary border-opacity-50 mb-4 small text-muted">
+            <i class="bi bi-info-circle-fill text-info me-1"></i>
+            <strong>Adaptive Mechanism Active:</strong> Your next question's difficulty and topic depth will adapt in real time based on your evaluation scores.
+          </div>
+
+          <button type="submit" class="btn btn-primary-custom w-100 py-3 fs-5">
+            <i class="bi bi-play-circle-fill me-2"></i> Launch Interview Session
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

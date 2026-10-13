@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}IntelliHire - AI Mock Interview Platform | Practice Smarter. Interview Better.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-center">
+  <div class="hero-glow"></div>
+  <div class="container position-relative">
+    <div class="row justify-content-center">
+      <div class="col-lg-9">
+        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-dark border border-secondary mb-3 shadow-sm">
+          <span class="pulse-indicator"></span>
+          <span class="small fw-semibold text-light">Adaptive AI Engineering & Career Preparation</span>
+        </div>
+        
+        <h1 class="display-4 fw-extrabold text-white mb-3">
+          Ace Technical & HR Interviews with <br class="d-none d-md-block">
+          <span class="brand-gradient">Real-Time Adaptive Intelligence</span>
+        </h1>
+        
+        <p class="lead text-muted mb-4 px-md-5">
+          IntelliHire replicates real campus placements and enterprise hiring with company-specific question banks, 
+          transparent NLP evaluation, PDF resume skill extraction, and adaptive follow-up questions.
+        </p>
+
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+          <a href="{{ url_for('auth.register') }}" class="btn btn-primary-custom btn-lg px-4 py-3">
+            <i class="bi bi-play-circle-fill me-2"></i> Start Practice Interview
+          </a>
+          <a href="{{ url_for('auth.login') }}" class="btn btn-outline-custom btn-lg px-4 py-3">
+            <i class="bi bi-box-arrow-in-right me-2"></i> Candidate Login
+          </a>
+        </div>
+
+        <div class="mt-4 pt-3 d-flex flex-wrap justify-content-center align-items-center gap-4 text-muted small">
+          <div><i class="bi bi-shield-check text-success me-1"></i> 100% Offline NLP</div>
+          <div><i class="bi bi-file-earmark-pdf text-info me-1"></i> PyMuPDF Parsing</div>
+          <div><i class="bi bi-building text-warning me-1"></i> Top IT Companies</div>
+          <div><i class="bi bi-cpu text-primary me-1"></i> TF-IDF & Cosine Similarity</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Company Logos / Tracks -->
+<section class="py-4 border-top border-bottom border-secondary border-opacity-25 bg-dark bg-opacity-50">
+  <div class="container text-center">
+    <div class="small text-uppercase tracking-wider text-muted fw-bold mb-3">Tailored Preparation for Leading Recruiters</div>
+    <div class="d-flex flex-wrap justify-content-center align-items-center gap-3 gap-md-5 opacity-75">
+      <span class="fs-5 fw-bold text-white"><i class="bi bi-buildings me-2"></i>TCS</span>
+      <span class="fs-5 fw-bold text-white"><i class="bi bi-laptop me-2"></i>Infosys</span>
+      <span class="fs-5 fw-bold text-white"><i class="bi bi-code-slash me-2"></i>Zoho</span>
+      <span class="fs-5 fw-bold text-white"><i class="bi bi-globe me-2"></i>Accenture</span>
+      <span class="fs-5 fw-bold text-white"><i class="bi bi-cart3 me-2"></i>Amazon</span>
+      <span class="fs-5 fw-bold text-white"><i class="bi bi-search me-2"></i>Google</span>
+    </div>
+  </div>
+</section>
+
+<!-- Key Platform Features Grid -->
+<section class="py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold text-white">Engineered for Technical Viva & Real Hiring</h2>
+      <p class="text-muted">A complete full-stack architecture combining natural language processing and relational data.</p>
+    </div>
+
+    <div class="row g-4">
+      <!-- Feature 1: Adaptive Follow-ups -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card card-glass h-100 p-4 hover-lift">
+          <div class="stat-icon bg-primary bg-opacity-25 text-primary mb-3">
+            <i class="bi bi-diagram-3-fill"></i>
+          </div>
+          <h4 class="text-white fw-bold">Adaptive Question Engine</h4>
+          <p class="text-muted mb-0">
+            Unlike static quizzes, the platform adjusts next-question difficulty dynamically (Easy &rarr; Medium &rarr; Hard) 
+            based on your previous answer score, missing concepts, and linked question bank chains.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature 2: NLP Answer Evaluation -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card card-glass h-100 p-4 hover-lift">
+          <div class="stat-icon bg-success bg-opacity-25 text-success mb-3">
+            <i class="bi bi-cpu-fill"></i>
+          </div>
+          <h4 class="text-white fw-bold">Evidence-Based NLP Evaluation</h4>
+          <p class="text-muted mb-0">
+            Calculates TF-IDF vector space cosine similarity against model answers and checks keyword coverage. 
+            Provides honest, mathematical feedback without costly external API dependencies.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature 3: Resume Skill Extraction -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card card-glass h-100 p-4 hover-lift">
+          <div class="stat-icon bg-info bg-opacity-25 text-info mb-3">
+            <i class="bi bi-file-earmark-person-fill"></i>
+          </div>
+          <h4 class="text-white fw-bold">PDF Resume Analysis</h4>
+          <p class="text-muted mb-0">
+            Upload your resume PDF to extract programming languages, frameworks, and tools using PyMuPDF and 
+            domain dictionaries. Accurately flags scanned images when OCR is necessary.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature 4: Company Question Bank -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card card-glass h-100 p-4 hover-lift">
+          <div class="stat-icon bg-warning bg-opacity-25 text-warning mb-3">
+            <i class="bi bi-bank2"></i>
+          </div>
+          <h4 class="text-white fw-bold">Company Question Bank</h4>
+          <p class="text-muted mb-0">
+            Filter practice questions associated with TCS, Infosys, Zoho, Accenture, Amazon, and Google across 
+            core technical tracks and behavioral HR scenarios.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature 5: Hybrid Question Engine -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card card-glass h-100 p-4 hover-lift">
+          <div class="stat-icon bg-purple bg-opacity-25 text-primary mb-3" style="background: rgba(139, 92, 246, 0.25); color: #a78bfa;">
+            <i class="bi bi-shuffle"></i>
+          </div>
+          <h4 class="text-white fw-bold">Hybrid Question Selection</h4>
+          <p class="text-muted mb-0">
+            A 4-tier selection hierarchy (Linked follow-up &rarr; Company bank &rarr; General bank &rarr; Template generator) 
+            ensures you never run out of questions or repeat questions in a session.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feature 6: Performance Analytics -->
+      <div class="col-md-6 col-lg-4">
+        <div class="card card-glass h-100 p-4 hover-lift">
+          <div class="stat-icon bg-danger bg-opacity-25 text-danger mb-3">
+            <i class="bi bi-graph-up-arrow"></i>
+          </div>
+          <h4 class="text-white fw-bold">Readiness Analytics</h4>
+          <p class="text-muted mb-0">
+            Comprehensive post-interview score reports with Chart.js visualizations, identified strengths, 
+            omitted technical terms, and personalized revision recommendations.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5 bg-dark bg-opacity-75">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="badge badge-tech mb-2">Workflow</span>
+      <h2 class="fw-bold text-white">How IntelliHire Works</h2>
+      <p class="text-muted">A seamless 4-step interview preparation cycle designed for students.</p>
+    </div>
+
+    <div class="row g-4 text-center">
+      <div class="col-md-3">
+        <div class="card card-glass p-4 h-100">
+          <div class="display-6 fw-bold text-primary mb-2">01</div>
+          <h5 class="text-white fw-bold">Configure or Upload</h5>
+          <p class="small text-muted mb-0">Upload your PDF resume to detect skills or configure target company, skill, and difficulty.</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card card-glass p-4 h-100">
+          <div class="display-6 fw-bold text-info mb-2">02</div>
+          <h5 class="text-white fw-bold">Live Question Delivery</h5>
+          <p class="small text-muted mb-0">Receive one question at a time from company banks or our local synthesis generator.</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card card-glass p-4 h-100">
+          <div class="display-6 fw-bold text-warning mb-2">03</div>
+          <h5 class="text-white fw-bold">Adaptive Feedback</h5>
+          <p class="small text-muted mb-0">Submit answers for instant TF-IDF similarity, keyword verification, and adaptive follow-up selection.</p>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card card-glass p-4 h-100">
+          <div class="display-6 fw-bold text-success mb-2">04</div>
+          <h5 class="text-white fw-bold">Review Readiness</h5>
+          <p class="small text-muted mb-0">Receive a detailed performance report with radar analytics and tailored study roadmap.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-5">
+      <a href="{{ url_for('auth.register') }}" class="btn btn-primary-custom btn-lg px-5">
+        Get Started Today <i class="bi bi-arrow-right ms-2"></i>
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}

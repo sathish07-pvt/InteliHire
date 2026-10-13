@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}{{ action }} Question - IntelliHire Admin{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card card-glass p-4 p-md-5">
+        <div class="d-flex align-items-center justify-content-between mb-4 border-bottom border-secondary pb-3">
+          <div>
+            <span class="badge bg-warning bg-opacity-25 text-warning mb-1">Question Repository</span>
+            <h2 class="fw-bold text-white mb-0">{{ action }} Question</h2>
+          </div>
+          <a href="{{ url_for('admin.questions_list') }}" class="btn btn-outline-custom">
+            <i class="bi bi-arrow-left me-1"></i> Back to Bank
+          </a>
+        </div>
+
+        <form method="POST">
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label class="form-label">Target Company</label>
+              <select name="company" class="form-select form-select-custom" required>
+                {% for c in companies %}
+                  <option value="{{ c }}" {% if question and question.company == c %}selected{% endif %}>{{ c }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Primary Skill</label>
+              <select name="skill" class="form-select form-select-custom" required>
+                {% for s in skills %}
+                  <option value="{{ s }}" {% if question and question.skill == s %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <label class="form-label">Interview Type</label>
+              <select name="interview_type" class="form-select form-select-custom" required>
+                <option value="Technical" {% if question and question.interview_type == 'Technical' %}selected{% endif %}>Technical</option>
+                <option value="HR" {% if question and question.interview_type == 'HR' %}selected{% endif %}>HR / Behavioral</option>
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Difficulty Level</label>
+              <select name="difficulty" class="form-select form-select-custom" required>
+                {% for d in difficulties %}
+                  <option value="{{ d }}" {% if question and question.difficulty == d %}selected{% endif %}>{{ d }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Topic / Subcategory</label>
+              <input type="text" name="category" class="form-control form-control-custom" value="{{ question.category if question else '' }}" placeholder="e.g. OOP, Normalization">
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Question Text</label>
+            <textarea name="question_text" class="form-control form-control-custom" rows="3" placeholder="Enter clear, concise question prompt..." required>{{ question.question_text if question else '' }}</textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Benchmark Model Answer</label>
+            <textarea name="model_answer" class="form-control form-control-custom" rows="4" placeholder="Enter ideal benchmark answer used for NLP TF-IDF evaluation..." required>{{ question.model_answer if question else '' }}</textarea>
+            <div class="form-text text-muted">The NLP engine computes semantic cosine similarity against this text.</div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Essential Keywords (Comma-Separated)</label>
+            <input type="text" name="keywords" class="form-control form-control-custom" value="{{ (question.keywords|join(', ')) if (question and question.keywords) else '' }}" placeholder="e.g. inheritance, polymorphism, extends, override" required>
+            <div class="form-text text-muted">Used for lexical keyword coverage and missing concept detection.</div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label">Link Follow-Up Question (Optional)</label>
+            <select name="follow_up_to_id" class="form-select form-select-custom">
+              <option value="">None (Independent Question)</option>
+              {% for opt in all_questions %}
+                <option value="{{ opt.id }}" {% if question and question.follow_up_to_id == opt.id %}selected{% endif %}>
+                  #{{ opt.id }}: [{{ opt.skill }} - {{ opt.difficulty }}] {{ opt.question_text|truncate(60) }}
+                </option>
+              {% endfor %}
+            </select>
+            <div class="form-text text-muted">The adaptive selection engine prioritizes linked follow-ups after strong candidate answers.</div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2">
+            <a href="{{ url_for('admin.questions_list') }}" class="btn btn-outline-custom">Cancel</a>
+            <button type="submit" class="btn btn-primary-custom px-4">
+              <i class="bi bi-check2-circle me-1"></i> Save Question
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}File Too Large - IntelliHire{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center">
+  <div class="py-5">
+    <div class="display-1 fw-bold text-warning mb-2">413</div>
+    <h2 class="fw-bold text-white mb-3">Document Size Limit Exceeded</h2>
+    <p class="text-muted mb-4">The uploaded resume exceeds the maximum allowable limit of 5 Megabytes (5MB). Please optimize or compress your PDF.</p>
+    <a href="{{ url_for('resume.analyze') }}" class="btn btn-primary-custom px-4 py-2">
+      <i class="bi bi-arrow-left me-1"></i> Back to Resume Upload
+    </a>
+  </div>
+</div>
+{% endblock %}
